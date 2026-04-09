@@ -1,4 +1,5 @@
 from contextlib import asynccontextmanager
+import os
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
@@ -18,9 +19,20 @@ async def lifespan(_: FastAPI):
 
 app = FastAPI(title="Chat App API", version="1.0.0", lifespan=lifespan)
 
+# CORS must explicitly allow frontend origins so browsers can call this API.
+# CLIENT_ORIGIN supports comma-separated values for multi-environment setups.
+origins = [
+    origin.strip()
+    for origin in os.getenv(
+        "CLIENT_ORIGIN",
+        "http://localhost:5173,http://192.168.11.97:5173",
+    ).split(",")
+    if origin.strip()
+]
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[settings.client_origin],
+    allow_origins=origins or [settings.client_origin],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
