@@ -2,9 +2,8 @@ from contextlib import asynccontextmanager
 import os
 
 from fastapi import FastAPI
-from fastapi.middleware.cors import CORSMiddleware
 
-from app.core.config import settings
+from app.core.middleware import configure_cors
 from app.db.database import connect_to_mongo, disconnect_mongo
 from app.routes import auth, messages, users
 from app.sockets.chat_socket import router as chat_socket_router
